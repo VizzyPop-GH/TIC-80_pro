@@ -6,66 +6,6 @@ env:
   BUILD_TYPE: MinSizeRel
 
 jobs:
-  # === Windows XP ===
-  winxp:
-    runs-on: windows-2019
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-
-      - name: Build
-        shell: cmd
-        run: |
-          cd build
-          cmake -G "Visual Studio 16 2019" -A Win32 -T v141_xp -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_STUB=On ..
-          cmake --build . --config %BUILD_TYPE% --parallel
-
-      - name: Deploy
-        uses: actions/upload-artifact@v3
-        with:
-          name: "tic80-winxp"
-          path: build/bin/tic80.exe
-
-      - name: Deploy stubs
-        uses: actions/upload-artifact@v3
-        with:
-          name: "tic80-winxp-stub"
-          path: build/bin/tic80*.exe
-
-  # === Windows XP PRO ===
-  winxp-pro:
-    runs-on: windows-2019
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-
-      - name: Build
-        shell: cmd
-        run: |
-          cd build
-          cmake -G "Visual Studio 16 2019" -A Win32 -T v141_xp -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DBUILD_PRO=On ..
-          cmake --build . --config %BUILD_TYPE% --parallel
-
-      - name: Deploy
-        uses: actions/upload-artifact@v3
-        with:
-          name: "tic80-winxp-pro"
-          path: build/bin/tic80.exe
-
   # === Windows ===
   windows:
     runs-on: windows-2019
@@ -801,21 +741,3 @@ jobs:
             tic80-macos-stub
             tic80-html-stub
 
-  # === Delete PRO artifacts ===
-  delete-pro:
-    needs: [winxp-pro, windows-pro, linux-pro, macos-pro, rpi-pro]
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Delete artifacts
-        uses: geekyeggo/delete-artifact@v2
-        with:
-          name: |
-            tic80-macos-pro
-            tic80-macos-dmg-pro
-            tic80-winxp-pro
-            tic80-windows-pro
-            tic80-linux-deb-pro
-            tic80-linux-pro
-            tic80-rpi-deb-pro
-            tic80-rpi-pro
